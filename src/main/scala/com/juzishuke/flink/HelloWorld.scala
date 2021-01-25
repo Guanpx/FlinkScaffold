@@ -1,3 +1,5 @@
+package com.juzishuke.flink
+
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 
 
