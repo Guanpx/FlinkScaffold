@@ -1,7 +1,9 @@
+package com.juzishuke.flink
+
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 
 
-object HelloWorld {
+object HelloWorldNc {
 
   def main(args: Array[String]): Unit = {
 
@@ -22,9 +24,5 @@ object HelloWorld {
 
     env.execute("打印输入数据")
   }
-
-
-  // Data type for words with count
-  case class WordWithCount(word: String, count: Long)
 
 }
