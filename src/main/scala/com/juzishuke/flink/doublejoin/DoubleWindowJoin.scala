@@ -4,6 +4,7 @@ import java.lang
 
 import org.apache.flink.api.common.functions.CoGroupFunction
 import org.apache.flink.streaming.api.TimeCharacteristic
+import org.apache.flink.streaming.api.functions.timestamps.{AscendingTimestampExtractor, BoundedOutOfOrdernessTimestampExtractor}
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.windowing.assigners.{TumblingEventTimeWindows, TumblingProcessingTimeWindows}
 //import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
@@ -44,36 +45,32 @@ object DoubleWindowJoin {
 
     val browseStream: KeyedStream[UserBrowseLog, String] = env
       .fromElements(
-        UserBrowseLog("user_2", "1616508082", "browse", "product_1", "10"), // 22
-        UserBrowseLog("user_4", "1616508085", "browse", "product_1", "10"), // 25
-        UserBrowseLog("user_1", "1616508089", "browse", "product_1", "10"), // 29
-        UserBrowseLog("user_3", "1616508095", "browse", "product_1", "10") // 35
+        UserBrowseLog("user_3", "1616515208", "browse", "product_1", "10"), // 08
+        UserBrowseLog("user_4", "1616515208", "browse", "product_1", "10"), // 08
+        UserBrowseLog("user_1", "1616515208", "browse", "product_1", "10"), // 08
+        UserBrowseLog("user_2", "1616515208", "browse", "product_1", "10") // 08
       )
-      .assignAscendingTimestamps(_.eventTime.toLong * 1000L)
+//      .assignAscendingTimestamps(_.eventTime.toLong * 1000L)
+      .assignTimestampsAndWatermarks(new BoundTsUserBrowseLog)
+//      .assignTimestampsAndWatermarks(new setTsAndWaterBrowse)
       .keyBy(_.userID)
 
     val clickStream: KeyedStream[UserClickLog, String] = env
       .fromElements(
-        UserClickLog("user_2", "1616508079", "click", "page_1"), // 19
-        UserClickLog("user_3", "1616508085", "click", "page_1") //25
+        UserClickLog("user_2", "1616515211", "click", "page_1"), // 11
+        UserClickLog("user_3", "1616515202", "click", "page_1") // 12
       )
-      .assignAscendingTimestamps(_.eventTime.toLong * 1000L)
+//      .assignAscendingTimestamps(_.eventTime.toLong * 1000L)
+      .assignTimestampsAndWatermarks(new BoundTsUserClickLog)
+//      .assignTimestampsAndWatermarks(new setTsAndWater)
       .keyBy(_.userID)
-
-    //    browseStream.join(clickStream)
-    //      .where(_.userID)
-    //      .equalTo(_.userID)
-    //      .window(TumblingEventTimeWindows.of(Time.seconds(2)))
-    //      .apply(func _)
-    //      .print()
 
     browseStream.coGroup(clickStream)
       .where(_.userID)
       .equalTo(_.userID)
-      .window(TumblingEventTimeWindows.of(Time.seconds(5)))
+      .window(TumblingEventTimeWindows.of(Time.seconds(4)))
       .apply(new LeftJoin)
       .print()
-
 
     env.execute()
 
@@ -82,6 +79,7 @@ object DoubleWindowJoin {
   def func(a: UserBrowseLog, b: UserClickLog, out: Collector[String]): Unit = {
     out.collect(a + " ----- " + b)
   }
+
   class LeftJoin extends CoGroupFunction[UserBrowseLog, UserClickLog, String]{
 
     override def coGroup(first: lang.Iterable[UserBrowseLog], second: lang.Iterable[UserClickLog], out: Collector[String]): Unit = {
@@ -91,6 +89,7 @@ object DoubleWindowJoin {
         val key: String = elem1.userID
         var flag = 0
         for (elem2 <- right) {
+          println(elem2)
           if(elem2.userID == key){
             flag = 1
             out.collect(elem1 + " --- " + elem2)
@@ -106,5 +105,34 @@ object DoubleWindowJoin {
   }
 
 
+  class BoundTsUserClickLog extends BoundedOutOfOrdernessTimestampExtractor[UserClickLog](Time.seconds(5)){
+
+
+    override def extractTimestamp(elem: UserClickLog): Long = {
+      println(super.getCurrentWatermark)
+      println(super.getMaxOutOfOrdernessInMillis)
+      elem.eventTime.toLong * 1000L
+    }
+  }
+
+  class BoundTsUserBrowseLog extends BoundedOutOfOrdernessTimestampExtractor[UserBrowseLog](Time.seconds(5)){
+    override def extractTimestamp(elem: UserBrowseLog): Long = {
+      println(super.getCurrentWatermark)
+      println(super.getMaxOutOfOrdernessInMillis)
+      elem.eventTime.toLong * 1000L
+    }
+  }
+
+  class setTsAndWater extends AscendingTimestampExtractor[UserClickLog]{
+    override def extractAscendingTimestamp(element: UserClickLog): Long = {
+      element.eventTime.toLong * 1000L
+    }
+  }
+
+  class setTsAndWaterBrowse extends AscendingTimestampExtractor[UserBrowseLog]{
+    override def extractAscendingTimestamp(element: UserBrowseLog): Long = {
+      element.eventTime.toLong * 1000L
+    }
+  }
 
 }
