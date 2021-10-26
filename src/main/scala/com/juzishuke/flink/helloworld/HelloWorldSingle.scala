@@ -1,4 +1,4 @@
-package com.juzishuke.flink
+package com.juzishuke.flink.helloworld
 
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 
@@ -11,7 +11,6 @@ import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 object HelloWorldSingle {
   def main(args: Array[String]): Unit = {
     val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
-//    val text = env.
 
   }
 }

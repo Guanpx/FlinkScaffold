@@ -1,6 +1,4 @@
-package com.juzishuke.flink
-
-import java.lang
+package com.juzishuke.flink.helloworld
 
 import org.apache.flink.api.common.functions.CoGroupFunction
 import org.apache.flink.streaming.api.TimeCharacteristic
@@ -10,6 +8,7 @@ import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindo
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.util.Collector
 
+import java.lang
 import scala.collection.JavaConverters._
 
 object HelloWorldNc {
@@ -36,8 +35,12 @@ object HelloWorldNc {
     })
       .assignTimestampsAndWatermarks(new newTs)
       .keyBy(_._1)
+
     left.print()
 
+    /**
+     * 两流join
+     */
     left.coGroup(rt)
       .where(_._1)
       .equalTo(_._1)
@@ -45,19 +48,12 @@ object HelloWorldNc {
       .apply(new LeftJoin)
       .print()
 
-
-
-    //    val textResult =
-    //      text.flatMap(_.split("\\s"))
-    //        .map((_, 1))
-    //        .keyBy(_._1)
-    //        .reduce((a, b) => (a._1, a._2 + b._2))
-
-    //    textResult.print().setParallelism(1)
-
     env.execute("打印输入数据")
   }
 
+  /**
+   * 实现left join
+   */
   class LeftJoin extends CoGroupFunction[(String, String), (String, String), String] {
     override def coGroup(first: lang.Iterable[(String, String)], second: lang.Iterable[(String, String)], out: Collector[String]): Unit = {
       val lf: Iterable[(String, String)] = first.asScala
@@ -83,14 +79,16 @@ object HelloWorldNc {
     }
   }
 
-
-  class setTsAndWater extends AscendingTimestampExtractor[(String, String)]{
+  /**
+   * set water
+   */
+  class setTsAndWater extends AscendingTimestampExtractor[(String, String)] {
     override def extractAscendingTimestamp(element: (String, String)): Long = {
       element._2.toLong * 1000L
     }
   }
 
-  class newTs extends BoundedOutOfOrdernessTimestampExtractor[(String, String)](Time.seconds(5)){
+  class newTs extends BoundedOutOfOrdernessTimestampExtractor[(String, String)](Time.seconds(5)) {
     override def extractTimestamp(element: (String, String)): Long = {
       element._2.toLong * 1000L
     }

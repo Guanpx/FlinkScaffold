@@ -10,14 +10,25 @@
 
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <flink.version>1.9.0</flink.version>
-        <java.version>1.8</java.version>
-        <scala.binary.version>2.11</scala.binary.version>
-        <scala.version>2.11.12</scala.version>
 
-<!--        <scope.value>provided</scope.value>-->
-         <scope.value>compile</scope.value>
+        <scala.version>2.12.12</scala.version>
+        <scala.binary.version>2.12</scala.binary.version>
+        <spark.version>2.4.0</spark.version>
+        <hadoop.version>3.0.0</hadoop.version>
+        <hbase.version>2.1.0</hbase.version>
+        <fastjson.version>1.2.73</fastjson.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <jdbc.version>5.1.40</jdbc.version>
+        <flink.version>1.13.2</flink.version>
+        <elasticsearch.version>7.6.1</elasticsearch.version>
+
+        <encoding>UTF-8</encoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+        <!--        <scope.value>provided</scope.value>-->
+        <scope.value>compile</scope.value>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -67,20 +78,86 @@
     </repositories>
 
     <dependencies>
+
+
         <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala.version}</version>
-            <scope>provided</scope>
+            <groupId>com.jzsk.bigdata</groupId>
+            <artifactId>bigdata-common-utils</artifactId>
+            <version>4.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.2.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-jdbc-driver</artifactId>
+            <version>4.0.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.housepower</groupId>
+            <artifactId>clickhouse-native-jdbc</artifactId>
+            <version>2.5.6</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/ru.yandex.clickhouse/clickhouse-jdbc -->
+        <dependency>
+            <groupId>ru.yandex.clickhouse</groupId>
+            <artifactId>clickhouse-jdbc</artifactId>
+            <version>0.3.1</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-jdbc-client</artifactId>
+            <version>3.8.3</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>3.8.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-metrics-prometheus_2.12</artifactId>
+            <version>${flink.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>org.apache.flink</groupId>
-            <artifactId>flink-scala_${scala.binary.version}</artifactId>
+            <artifactId>flink-statebackend-rocksdb_2.12</artifactId>
             <version>${flink.version}</version>
             <scope>${scope.value}</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-runtime-web_2.12</artifactId>
+            <version>${flink.version}</version>
+            <scope>${scope.value}</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-json</artifactId>
+            <version>${flink.version}</version>
+            <scope>${scope.value}</scope>
+        </dependency>
+        <!-- f-kafka todo add -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-kafka_2.12</artifactId>
+            <version>${flink.version}</version>
+            <!--            <scope>${scope.value}</scope>-->
+        </dependency>
+
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-streaming-scala_${scala.binary.version}</artifactId>
@@ -88,27 +165,156 @@
             <scope>${scope.value}</scope>
         </dependency>
 
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.flink</groupId>-->
+        <!--            <artifactId>flink-connector-elasticsearch7_${scala.binary.version}</artifactId>-->
+        <!--            <version>${flink.version}</version>-->
+        <!--            <scope>${scope.value}</scope>-->
+        <!--        </dependency>-->
 
-<!--        <dependency>-->
-<!--            <groupId>org.apache.flink</groupId>-->
-<!--            <artifactId>flink-table_${scala.binary.version}</artifactId>-->
-<!--            <version>${flink.version}</version>-->
-<!--            <scope>${scope.value}</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-common</artifactId>
+            <version>${flink.version}</version>
+            <scope>${scope.value}</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-clients_${scala.binary.version}</artifactId>
+            <version>${flink.version}</version>
+            <scope>${scope.value}</scope>
+        </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.flink</groupId>-->
+        <!--            <artifactId>flink-table-api-scala-bridge_${scala.binary.version}</artifactId>-->
+        <!--            <version>${flink.version}</version>-->
+        <!--            <scope>${scope.value}</scope>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.flink</groupId>-->
+        <!--            <artifactId>flink-table-planner-blink_${scala.binary.version}</artifactId>-->
+        <!--            <version>${flink.version}</version>-->
+        <!--            <scope>${scope.value}</scope>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.flink</groupId>-->
+        <!--            <artifactId>flink-table-planner_${scala.binary.version}</artifactId>-->
+        <!--            <version>${flink.version}</version>-->
+        <!--            <scope>${scope.value}</scope>-->
+        <!--        </dependency>-->
 
 
+        <!--fastjson-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+        <!-- avro  -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.avro</groupId>-->
+        <!--            <artifactId>avro</artifactId>-->
+        <!--            <version>1.8.2</version>-->
+        <!--        </dependency>-->
+
+        <!--hadoop-->
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>${scope.value}</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>${scope.value}</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>${scope.value}</scope>
+        </dependency>
+
+        <!-- hbase todo add  -->
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>${hbase.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-common</artifactId>
+            <version>${hbase.version}</version>
+        </dependency>
+
+        <!--slf4j-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.7</version>
-            <scope>runtime</scope>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
-            <scope>runtime</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <!--Redis驱动-->
+        <!--        <dependency>-->
+        <!--            <groupId>redis.clients</groupId>-->
+        <!--            <artifactId>jedis</artifactId>-->
+        <!--            <version>2.9.0</version>-->
+        <!--            <scope>${scope.value}</scope>-->
+        <!--        </dependency>-->
+
+
+        <!--mysql-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${jdbc.version}</version>
+            <scope>${scope.value}</scope>
+        </dependency>
+
+        <!-- scala-lang -->
+        <dependency>
+            <groupId>org.scala-lang.modules</groupId>
+            <artifactId>scala-async_2.12</artifactId>
+            <version>1.0.0</version>
+            <scope>${scope.value}</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-reflect</artifactId>
+            <version>${scala.version}</version>
+            <scope>${scope.value}</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+            <scope>${scope.value}</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-compiler</artifactId>
+            <version>${scala.version}</version>
+            <scope>${scope.value}</scope>
+        </dependency>
+
+
     </dependencies>
 
 </project>
