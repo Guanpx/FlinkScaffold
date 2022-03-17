@@ -28,7 +28,7 @@ public class AsyncIODemo {
         env.setParallelism(1);
         final int maxCount = 6;
         final int taskNum = 1;
-        final long timeout = 40000;
+        final long timeout = 4000;
 
         DataStream<Integer> inputStream = env.addSource(new SimpleSource(maxCount));
         AsyncFunction<Integer, String> function = new SampleAsyncFunction();

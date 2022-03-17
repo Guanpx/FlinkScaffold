@@ -1,4 +1,4 @@
-package com.juzishuke.flink.doublejoin
+package com.magic.flink.doublejoin
 
 import org.apache.flink.api.common.functions.CoGroupFunction
 import org.apache.flink.streaming.api.TimeCharacteristic

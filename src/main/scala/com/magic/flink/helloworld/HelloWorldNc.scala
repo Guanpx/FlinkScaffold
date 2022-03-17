@@ -1,4 +1,4 @@
-package com.juzishuke.flink.helloworld
+package com.magic.flink.helloworld
 
 import org.apache.flink.api.common.functions.CoGroupFunction
 import org.apache.flink.streaming.api.TimeCharacteristic

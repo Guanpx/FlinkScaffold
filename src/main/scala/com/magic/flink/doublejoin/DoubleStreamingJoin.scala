@@ -1,9 +1,8 @@
-package com.juzishuke.flink.doublejoin
+package com.magic.flink.doublejoin
 
 
 
 import com.alibaba.fastjson.JSONObject
-import com.juzishuke.flink.entity.DataSchema
 import org.apache.flink.api.common.functions.{CoGroupFunction, RichMapFunction}
 import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.configuration.Configuration
@@ -14,7 +13,7 @@ import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, _}
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
-import org.apache.flink.streaming.connectors.kafka.{FlinkKafkaConsumer011, FlinkKafkaProducer011}
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011
 import org.apache.flink.util.Collector
 
 import java.lang
@@ -53,7 +52,7 @@ object DoubleStreamingJoin {
     props.put("auto.offset.reset", "latest")
 
     val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
-    env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
+    env.setStreamTimeCharacteristiΩc(TimeCharacteristic.EventTime)
     env.getConfig.setGlobalJobParameters(ParameterTool.fromArgs(args))
 
     val outTopic: String = ParameterTool.fromArgs(args).get("out")

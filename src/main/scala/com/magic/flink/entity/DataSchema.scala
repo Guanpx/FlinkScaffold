@@ -1,4 +1,4 @@
-package com.juzishuke.flink.entity
+package com.magic.flink.entity
 
 import com.alibaba.fastjson.{JSON, JSONObject}
 import org.apache.flink.api.common.serialization.{DeserializationSchema, SerializationSchema}
